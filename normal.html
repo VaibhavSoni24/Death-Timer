@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Normal Timer - Futuristic Timer</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        .timer-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .timer-container {
+            background: var(--secondary-bg);
+            border: 2px solid var(--accent-color);
+            border-radius: 30px;
+            padding: 60px 40px;
+            box-shadow: 0 0 50px var(--glow-color);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+
+        .timer-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            color: var(--accent-color);
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px var(--glow-color);
+        }
+
+        .time-display {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            color: var(--text-primary);
+            text-shadow: 0 0 30px var(--glow-color);
+            margin-bottom: 20px;
+            animation: digitalGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes digitalGlow {
+            0% { text-shadow: 0 0 30px var(--glow-color); }
+            100% { text-shadow: 0 0 50px var(--glow-color), 0 0 70px var(--glow-color); }
+        }
+
+        .time-label {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            background: linear-gradient(45deg, var(--accent-color), var(--secondary-accent));
+            border: none;
+            border-radius: 15px;
+            padding: 15px 30px;
+            font-family: 'Orbitron', monospace;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px var(--glow-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--glow-color);
+        }
+
+        .control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .control-btn.secondary {
+            background: var(--secondary-bg);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .control-btn.secondary:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 5px 20px var(--glow-color);
+        }
+
+        .progress-ring {
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 30px;
+            background: conic-gradient(from 0deg, var(--accent-color), var(--secondary-accent), var(--accent-color));
+            z-index: -1;
+            animation: rotateRing 3s linear infinite;
+        }
+
+        @keyframes rotateRing {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .timer-finished {
+            animation: finishPulse 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes finishPulse {
+            0% { 
+                transform: scale(1);
+                box-shadow: 0 0 50px var(--glow-color);
+            }
+            100% { 
+                transform: scale(1.05);
+                box-shadow: 0 0 100px var(--glow-color), 0 0 150px var(--secondary-accent);
+            }
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--secondary-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px 20px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-family: 'Orbitron', monospace;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-btn:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 20px var(--glow-color);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .timer-container {
+                padding: 40px 20px;
+                margin: 20px;
+            }
+
+            .time-display {
+                font-size: 3rem;
+            }
+
+            .timer-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .control-btn {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn">← Back</a>
+    
+    <div class="timer-display">
+        <div class="timer-container" id="timer-container">
+            <div class="progress-ring"></div>
+            <h1 class="timer-title">NORMAL TIMER</h1>
+            <div class="time-display" id="time-display">00:05:00</div>
+            <div class="time-label">TIME REMAINING</div>
+            
+            <div class="timer-controls">
+                <button class="control-btn" id="start-pause-btn">START</button>
+                <button class="control-btn secondary" id="reset-btn">RESET</button>
+                <button class="control-btn secondary" id="add-time-btn">+1 MIN</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="background-effects">
+        <div class="grid-overlay"></div>
+        <div class="floating-particles"></div>
+    </div>
+
+    <script>
+        class NormalTimer {
+            constructor() {
+                this.totalTime = 0;
+                this.remainingTime = 0;
+                this.isRunning = false;
+                this.intervalId = null;
+                this.init();
+            }
+
+            init() {
+                this.loadTimerData();
+                this.setupEventListeners();
+                this.updateDisplay();
+            }
+
+            loadTimerData() {
+                const timerData = JSON.parse(localStorage.getItem('timerData'));
+                if (timerData && timerData.type === 'normal') {
+                    const totalSeconds = (timerData.hours * 3600) + (timerData.minutes * 60) + timerData.seconds;
+                    this.totalTime = totalSeconds;
+                    this.remainingTime = totalSeconds;
+                } else {
+                    // Default to 5 minutes if no data
+                    this.totalTime = 300;
+                    this.remainingTime = 300;
+                }
+            }
+
+            setupEventListeners() {
+                document.getElementById('start-pause-btn').addEventListener('click', () => this.toggleTimer());
+                document.getElementById('reset-btn').addEventListener('click', () => this.resetTimer());
+                document.getElementById('add-time-btn').addEventListener('click', () => this.addTime());
+
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    switch(e.code) {
+                        case 'Space':
+                            e.preventDefault();
+                            this.toggleTimer();
+                            break;
+                        case 'KeyR':
+                            this.resetTimer();
+                            break;
+                        case 'KeyA':
+                            this.addTime();
+                            break;
+                    }
+                });
+            }
+
+            toggleTimer() {
+                if (this.isRunning) {
+                    this.pauseTimer();
+                } else {
+                    this.startTimer();
+                }
+            }
+
+            startTimer() {
+                if (this.remainingTime <= 0) {
+                    this.resetTimer();
+                }
+                
+                this.isRunning = true;
+                document.getElementById('start-pause-btn').textContent = 'PAUSE';
+                
+                this.intervalId = setInterval(() => {
+                    this.remainingTime--;
+                    this.updateDisplay();
+                    
+                    if (this.remainingTime <= 0) {
+                        this.timerFinished();
+                    }
+                }, 1000);
+            }
+
+            pauseTimer() {
+                this.isRunning = false;
+                document.getElementById('start-pause-btn').textContent = 'START';
+                clearInterval(this.intervalId);
+            }
+
+            resetTimer() {
+                this.isRunning = false;
+                this.remainingTime = this.totalTime;
+                document.getElementById('start-pause-btn').textContent = 'START';
+                clearInterval(this.intervalId);
+                this.updateDisplay();
+                
+                // Remove finished state
+                const container = document.getElementById('timer-container');
+                container.classList.remove('timer-finished');
+            }
+
+            addTime() {
+                this.remainingTime += 60; // Add 1 minute
+                this.updateDisplay();
+            }
+
+            updateDisplay() {
+                const hours = Math.floor(this.remainingTime / 3600);
+                const minutes = Math.floor((this.remainingTime % 3600) / 60);
+                const seconds = this.remainingTime % 60;
+                
+                let timeString;
+                if (hours > 0) {
+                    timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                } else {
+                    timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+                
+                document.getElementById('time-display').textContent = timeString;
+                
+                // Update color based on remaining time
+                const display = document.getElementById('time-display');
+                if (this.remainingTime <= 10 && this.remainingTime > 0) {
+                    display.style.color = '#ff0040';
+                } else if (this.remainingTime <= 60) {
+                    display.style.color = '#ff8000';
+                } else {
+                    display.style.color = 'var(--text-primary)';
+                }
+            }
+
+            timerFinished() {
+                this.isRunning = false;
+                this.remainingTime = 0;
+                clearInterval(this.intervalId);
+                
+                document.getElementById('start-pause-btn').textContent = 'START';
+                document.getElementById('time-display').textContent = '00:00';
+                
+                // Add finished animation
+                const container = document.getElementById('timer-container');
+                container.classList.add('timer-finished');
+                
+                // Play notification sound (if browser supports it)
+                this.playNotificationSound();
+                
+                // Show notification
+                this.showNotification('Timer Finished!', 'Your countdown has reached zero.');
+            }
+
+            playNotificationSound() {
+                try {
+                    // Create audio context for notification sound
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
+                    oscillator.frequency.setValueAtTime(800, audioContext.currentTime + 0.2);
+                    
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.3);
+                } catch (e) {
+                    console.log('Audio notification not supported');
+                }
+            }
+
+            showNotification(title, message) {
+                if ('Notification' in window) {
+                    if (Notification.permission === 'granted') {
+                        new Notification(title, {
+                            body: message,
+                            icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzAiIHN0cm9rZT0iIzAwZmZmZiIgc3Ryb2tlLXdpZHRoPSI0Ii8+Cjwvc3ZnPgo='
+                        });
+                    } else if (Notification.permission !== 'denied') {
+                        Notification.requestPermission().then(permission => {
+                            if (permission === 'granted') {
+                                new Notification(title, { body: message });
+                            }
+                        });
+                    }
+                }
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new NormalTimer();
+        });
+    </script>
+</body>
+</html>

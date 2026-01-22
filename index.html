@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futuristic Timer</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Theme Toggle -->
+        <div class="theme-toggle">
+            <input type="checkbox" id="theme-switch" class="theme-switch">
+            <label for="theme-switch" class="theme-label">
+                <span class="theme-text">Dark Mode</span>
+            </label>
+        </div>
+
+        <!-- Main Interface -->
+        <div class="main-interface">
+            <h1 class="main-title">FUTURISTIC TIMER</h1>
+            <div class="subtitle">Select your temporal journey</div>
+
+            <!-- Timer Selection Buttons -->
+            <div class="timer-selection">
+                <button class="timer-btn active" data-timer="normal">
+                    <div class="btn-glow"></div>
+                    <span class="btn-text">Normal Timer</span>
+                    <div class="btn-description">Standard countdown</div>
+                </button>
+                <button class="timer-btn" data-timer="long">
+                    <div class="btn-glow"></div>
+                    <span class="btn-text">Long Timer</span>
+                    <div class="btn-description">Future countdown</div>
+                </button>
+                <button class="timer-btn" data-timer="death">
+                    <div class="btn-glow"></div>
+                    <span class="btn-text">Death Timer</span>
+                    <div class="btn-description">Life countdown</div>
+                </button>
+            </div>
+
+            <!-- Input Fields Container -->
+            <div class="input-container">
+                <!-- Normal Timer Inputs -->
+                <div class="input-section normal-inputs active">
+                    <h3 class="section-title">Set Standard Timer</h3>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="normal-hours">Hours</label>
+                            <input type="number" id="normal-hours" min="0" max="23" value="0" class="futuristic-input">
+                        </div>
+                        <div class="input-group">
+                            <label for="normal-minutes">Minutes</label>
+                            <input type="number" id="normal-minutes" min="0" max="59" value="5" class="futuristic-input">
+                        </div>
+                        <div class="input-group">
+                            <label for="normal-seconds">Seconds</label>
+                            <input type="number" id="normal-seconds" min="0" max="59" value="0" class="futuristic-input">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Long Timer Inputs -->
+                <div class="input-section long-inputs">
+                    <h3 class="section-title">Set Future Target</h3>
+                    <div class="input-grid long-grid">
+                        <div class="input-group">
+                            <label for="long-year">Year</label>
+                            <input type="number" id="long-year" min="2025" max="3000" value="2025" class="futuristic-input">
+                        </div>
+                        <div class="input-group">
+                            <label for="long-month">Month</label>
+                            <input type="number" id="long-month" min="1" max="12" value="12" class="futuristic-input">
+                        </div>
+                        <div class="input-group">
+                            <label for="long-date">Date</label>
+                            <input type="number" id="long-date" min="1" max="31" value="31" class="futuristic-input">
+                        </div>
+                        <div class="input-group">
+                            <label for="long-hour">Hour</label>
+                            <input type="number" id="long-hour" min="0" max="23" value="23" class="futuristic-input">
+                        </div>
+                        <div class="input-group">
+                            <label for="long-minute">Minute</label>
+                            <input type="number" id="long-minute" min="0" max="59" value="59" class="futuristic-input">
+                        </div>
+                        <div class="input-group">
+                            <label for="long-second">Second</label>
+                            <input type="number" id="long-second" min="0" max="59" value="59" class="futuristic-input">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Death Timer Inputs -->
+                <div class="input-section death-inputs">
+                    <h3 class="section-title">Life Countdown Calculator</h3>
+                    <div class="death-info">
+                        <p class="info-text">Enter your date of birth. The system will calculate your estimated remaining time based on average human lifespan (65-85 years).</p>
+                    </div>
+                    <div class="input-grid death-grid">
+                        <div class="input-group">
+                            <label for="birth-year">Birth Year</label>
+                            <input type="number" id="birth-year" min="1920" max="2025" value="1990" class="futuristic-input">
+                        </div>
+                        <div class="input-group">
+                            <label for="birth-month">Birth Month</label>
+                            <input type="number" id="birth-month" min="1" max="12" value="1" class="futuristic-input">
+                        </div>
+                        <div class="input-group">
+                            <label for="birth-date">Birth Date</label>
+                            <input type="number" id="birth-date" min="1" max="31" value="1" class="futuristic-input">
+                        </div>
+                    </div>
+                    <div class="lifespan-display">
+                        <span>Estimated Lifespan: <span id="estimated-lifespan">75</span> years</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Start Button -->
+            <button class="start-btn" id="start-timer">
+                <div class="start-glow"></div>
+                <span class="start-text">INITIATE TIMER</span>
+                <div class="start-particles"></div>
+            </button>
+        </div>
+
+        <!-- Background Effects -->
+        <div class="background-effects">
+            <div class="grid-overlay"></div>
+            <div class="floating-particles"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

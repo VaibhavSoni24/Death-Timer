@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Death Timer - Futuristic Timer</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        .death-timer-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .death-clock-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            margin: 0 auto;
+        }
+
+        .clock-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            box-shadow: 0 0 30px var(--glow-color);
+            animation: centerPulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes centerPulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            100% { transform: translate(-50%, -50%) scale(1.2); }
+        }
+
+        .rotating-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top: 3px solid var(--accent-color);
+            transform-origin: center;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+        }
+
+        .ring-label {
+            position: absolute;
+            top: -15px;
+            background: var(--primary-bg);
+            padding: 5px 15px;
+            border-radius: 15px;
+            border: 1px solid var(--accent-color);
+            color: var(--text-primary);
+            font-size: 14px;
+            text-shadow: 0 0 10px var(--glow-color);
+            box-shadow: 0 0 20px var(--glow-color);
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+        /* Ring sizes and animations */
+        .ring-years {
+            width: 120px;
+            height: 120px;
+            margin-left: -60px;
+            margin-top: -60px;
+            animation: rotateYears 60s linear infinite;
+            border-color: #ff0080;
+            border-top-color: #ff0080;
+        }
+
+        .ring-months {
+            width: 180px;
+            height: 180px;
+            margin-left: -90px;
+            margin-top: -90px;
+            animation: rotateMonths 45s linear infinite;
+            border-color: #ff4080;
+            border-top-color: #ff4080;
+        }
+
+        .ring-days {
+            width: 240px;
+            height: 240px;
+            margin-left: -120px;
+            margin-top: -120px;
+            animation: rotateDays 30s linear infinite;
+            border-color: #ff8040;
+            border-top-color: #ff8040;
+        }
+
+        .ring-hours {
+            width: 300px;
+            height: 300px;
+            margin-left: -150px;
+            margin-top: -150px;
+            animation: rotateHours 20s linear infinite;
+            border-color: #ffff00;
+            border-top-color: #ffff00;
+        }
+
+        .ring-minutes {
+            width: 360px;
+            height: 360px;
+            margin-left: -180px;
+            margin-top: -180px;
+            animation: rotateMinutes 10s linear infinite;
+            border-color: #80ff00;
+            border-top-color: #80ff00;
+        }
+
+        .ring-seconds {
+            width: 420px;
+            height: 420px;
+            margin-left: -210px;
+            margin-top: -210px;
+            animation: rotateSeconds 5s linear infinite;
+            border-color: #00ffff;
+            border-top-color: #00ffff;
+        }
+
+        @keyframes rotateYears { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes rotateMonths { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes rotateDays { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes rotateHours { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes rotateMinutes { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes rotateSeconds { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .timer-info {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .timer-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            color: var(--secondary-accent);
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(255, 0, 128, 0.8);
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        .birth-info {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .lifespan-info {
+            font-family: 'Orbitron', monospace;
+            font-size: 1rem;
+            color: var(--secondary-accent);
+            margin-bottom: 20px;
+        }
+
+        .estimated-death {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            text-shadow: 0 0 15px var(--glow-color);
+        }
+
+        .stats-container {
+            margin-top: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .stat-box {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 20px var(--glow-color);
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--secondary-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px 20px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-family: 'Orbitron', monospace;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-btn:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 20px var(--glow-color);
+            transform: translateY(-2px);
+        }
+
+        .urgency-state {
+            animation: urgencyPulse 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes urgencyPulse {
+            0% { 
+                filter: brightness(1);
+                transform: scale(1);
+            }
+            100% { 
+                filter: brightness(1.2);
+                transform: scale(1.02);
+            }
+        }
+
+        .final-moments {
+            animation: finalMoments 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes finalMoments {
+            0% { 
+                filter: brightness(1) hue-rotate(0deg);
+            }
+            100% { 
+                filter: brightness(1.5) hue-rotate(15deg);
+            }
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .death-clock-container {
+                width: 350px;
+                height: 350px;
+            }
+
+            .ring-years { width: 80px; height: 80px; margin-left: -40px; margin-top: -40px; }
+            .ring-months { width: 120px; height: 120px; margin-left: -60px; margin-top: -60px; }
+            .ring-days { width: 160px; height: 160px; margin-left: -80px; margin-top: -80px; }
+            .ring-hours { width: 200px; height: 200px; margin-left: -100px; margin-top: -100px; }
+            .ring-minutes { width: 240px; height: 240px; margin-left: -120px; margin-top: -120px; }
+            .ring-seconds { width: 280px; height: 280px; margin-left: -140px; margin-top: -140px; }
+
+            .timer-title {
+                font-size: 2rem;
+            }
+
+            .ring-label {
+                font-size: 12px;
+                padding: 3px 10px;
+            }
+
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .death-clock-container {
+                width: 280px;
+                height: 280px;
+            }
+
+            .ring-years { width: 60px; height: 60px; margin-left: -30px; margin-top: -30px; }
+            .ring-months { width: 90px; height: 90px; margin-left: -45px; margin-top: -45px; }
+            .ring-days { width: 120px; height: 120px; margin-left: -60px; margin-top: -60px; }
+            .ring-hours { width: 150px; height: 150px; margin-left: -75px; margin-top: -75px; }
+            .ring-minutes { width: 180px; height: 180px; margin-left: -90px; margin-top: -90px; }
+            .ring-seconds { width: 210px; height: 210px; margin-left: -105px; margin-top: -105px; }
+
+            .timer-title {
+                font-size: 1.5rem;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn">← Back</a>
+    
+    <div class="death-timer-display">
+        <div class="timer-info">
+            <h1 class="timer-title">LIFE COUNTDOWN</h1>
+            <div class="birth-info" id="birth-info">Born: Loading...</div>
+            <div class="lifespan-info" id="lifespan-info">Estimated Lifespan: Loading...</div>
+            <div class="estimated-death" id="estimated-death">Estimated End: Loading...</div>
+        </div>
+
+        <div class="death-clock-container" id="clock-container">
+            <div class="clock-center"></div>
+            
+            <div class="rotating-ring ring-years">
+                <div class="ring-label" id="years-label">0 Years</div>
+            </div>
+            
+            <div class="rotating-ring ring-months">
+                <div class="ring-label" id="months-label">0 Months</div>
+            </div>
+            
+            <div class="rotating-ring ring-days">
+                <div class="ring-label" id="days-label">0 Days</div>
+            </div>
+            
+            <div class="rotating-ring ring-hours">
+                <div class="ring-label" id="hours-label">00 Hours</div>
+            </div>
+            
+            <div class="rotating-ring ring-minutes">
+                <div class="ring-label" id="minutes-label">00 Minutes</div>
+            </div>
+            
+            <div class="rotating-ring ring-seconds">
+                <div class="ring-label" id="seconds-label">00 Seconds</div>
+            </div>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-box">
+                <div class="stat-value" id="days-lived">0</div>
+                <div class="stat-label">Days Lived</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="percentage-lived">0%</div>
+                <div class="stat-label">Life Percentage</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="total-years">0</div>
+                <div class="stat-label">Expected Years</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="remaining-percentage">100%</div>
+                <div class="stat-label">Time Remaining</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="background-effects">
+        <div class="grid-overlay"></div>
+        <div class="floating-particles"></div>
+    </div>
+
+    <script>
+        class DeathTimer {
+            constructor() {
+                this.birthDate = null;
+                this.estimatedDeathDate = null;
+                this.estimatedLifespan = 75;
+                this.intervalId = null;
+                this.isFinished = false;
+                this.init();
+            }
+
+            init() {
+                this.loadTimerData();
+                this.calculateEstimatedDeath();
+                this.updateDisplay();
+                this.startTimer();
+            }
+
+            loadTimerData() {
+                const timerData = JSON.parse(localStorage.getItem('timerData'));
+                if (timerData && timerData.type === 'death') {
+                    this.birthDate = new Date(timerData.birthYear, timerData.birthMonth - 1, timerData.birthDate);
+                    this.estimatedLifespan = timerData.estimatedLifespan || 75;
+                } else {
+                    // Default values
+                    this.birthDate = new Date(1990, 0, 1);
+                    this.estimatedLifespan = 75;
+                }
+
+                // Display birth info
+                const birthOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+                document.getElementById('birth-info').textContent = 
+                    `Born: ${this.birthDate.toLocaleDateString('en-US', birthOptions)}`;
+                
+                document.getElementById('lifespan-info').textContent = 
+                    `Estimated Lifespan: ${this.estimatedLifespan} years`;
+            }
+
+            calculateEstimatedDeath() {
+                this.estimatedDeathDate = new Date(this.birthDate);
+                this.estimatedDeathDate.setFullYear(this.estimatedDeathDate.getFullYear() + this.estimatedLifespan);
+
+                // Display estimated death date
+                const deathOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+                document.getElementById('estimated-death').textContent = 
+                    `Estimated End: ${this.estimatedDeathDate.toLocaleDateString('en-US', deathOptions)}`;
+                
+                document.getElementById('total-years').textContent = this.estimatedLifespan;
+            }
+
+            startTimer() {
+                this.intervalId = setInterval(() => {
+                    this.updateDisplay();
+                }, 1000);
+            }
+
+            updateDisplay() {
+                const now = new Date();
+                const timeDiff = this.estimatedDeathDate - now;
+
+                if (timeDiff <= 0 && !this.isFinished) {
+                    this.timerFinished();
+                    return;
+                }
+
+                if (timeDiff > 0) {
+                    const timeUnits = this.calculateTimeUnits(timeDiff);
+                    this.updateTimeLabels(timeUnits);
+                    this.updateStats(now);
+                    this.updateUrgencyLevel(timeUnits);
+                }
+            }
+
+            calculateTimeUnits(timeDiff) {
+                const years = Math.floor(timeDiff / (1000 * 60 * 60 * 24 * 365.25));
+                const months = Math.floor((timeDiff % (1000 * 60 * 60 * 24 * 365.25)) / (1000 * 60 * 60 * 24 * 30.44));
+                const days = Math.floor((timeDiff % (1000 * 60 * 60 * 24 * 30.44)) / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+                return { years, months, days, hours, minutes, seconds };
+            }
+
+            updateTimeLabels(timeUnits) {
+                document.getElementById('years-label').textContent = 
+                    `${timeUnits.years} Year${timeUnits.years !== 1 ? 's' : ''}`;
+                document.getElementById('months-label').textContent = 
+                    `${timeUnits.months} Month${timeUnits.months !== 1 ? 's' : ''}`;
+                document.getElementById('days-label').textContent = 
+                    `${timeUnits.days} Day${timeUnits.days !== 1 ? 's' : ''}`;
+                document.getElementById('hours-label').textContent = 
+                    `${timeUnits.hours.toString().padStart(2, '0')} Hours`;
+                document.getElementById('minutes-label').textContent = 
+                    `${timeUnits.minutes.toString().padStart(2, '0')} Minutes`;
+                document.getElementById('seconds-label').textContent = 
+                    `${timeUnits.seconds.toString().padStart(2, '0')} Seconds`;
+            }
+
+            updateStats(now) {
+                // Calculate days lived
+                const timeLived = now - this.birthDate;
+                const daysLived = Math.floor(timeLived / (1000 * 60 * 60 * 24));
+                document.getElementById('days-lived').textContent = daysLived.toLocaleString();
+
+                // Calculate life percentage
+                const totalExpectedLifeDays = this.estimatedLifespan * 365.25;
+                const percentageLived = Math.min(100, (daysLived / totalExpectedLifeDays) * 100);
+                document.getElementById('percentage-lived').textContent = `${percentageLived.toFixed(1)}%`;
+
+                // Calculate remaining percentage
+                const remainingPercentage = Math.max(0, 100 - percentageLived);
+                document.getElementById('remaining-percentage').textContent = `${remainingPercentage.toFixed(1)}%`;
+            }
+
+            updateUrgencyLevel(timeUnits) {
+                const container = document.getElementById('clock-container');
+                container.classList.remove('urgency-state', 'final-moments');
+
+                if (timeUnits.years === 0) {
+                    if (timeUnits.months === 0 && timeUnits.days <= 7) {
+                        // Final week
+                        container.classList.add('final-moments');
+                    } else if (timeUnits.months <= 1) {
+                        // Final month
+                        container.classList.add('urgency-state');
+                    }
+                }
+            }
+
+            timerFinished() {
+                this.isFinished = true;
+                clearInterval(this.intervalId);
+                
+                // Update all labels to show zero
+                document.getElementById('years-label').textContent = '0 Years';
+                document.getElementById('months-label').textContent = '0 Months';
+                document.getElementById('days-label').textContent = '0 Days';
+                document.getElementById('hours-label').textContent = '00 Hours';
+                document.getElementById('minutes-label').textContent = '00 Minutes';
+                document.getElementById('seconds-label').textContent = '00 Seconds';
+                
+                // Update info
+                document.getElementById('estimated-death').textContent = 'Estimated time reached';
+                document.getElementById('remaining-percentage').textContent = '0%';
+                
+                // Add final animation
+                const container = document.getElementById('clock-container');
+                container.classList.add('final-moments');
+                
+                // Play notification
+                this.playNotificationSound();
+                this.showNotification('Life Timer Complete', 'The estimated lifespan has been reached.');
+            }
+
+            playNotificationSound() {
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    
+                    // Create a solemn notification sound
+                    const frequencies = [220, 261.63, 329.63]; // A, C, E
+                    frequencies.forEach((freq, index) => {
+                        setTimeout(() => {
+                            const oscillator = audioContext.createOscillator();
+                            const gainNode = audioContext.createGain();
+                            
+                            oscillator.connect(gainNode);
+                            gainNode.connect(audioContext.destination);
+                            
+                            oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+                            gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);
+                            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 1);
+                            
+                            oscillator.start(audioContext.currentTime);
+                            oscillator.stop(audioContext.currentTime + 1);
+                        }, index * 300);
+                    });
+                } catch (e) {
+                    console.log('Audio notification not supported');
+                }
+            }
+
+            showNotification(title, message) {
+                if ('Notification' in window) {
+                    if (Notification.permission === 'granted') {
+                        new Notification(title, {
+                            body: message,
+                            icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzAiIHN0cm9rZT0iI2ZmMDA4MCIgc3Ryb2tlLXdpZHRoPSI0Ii8+Cjwvc3ZnPgo='
+                        });
+                    } else if (Notification.permission !== 'denied') {
+                        Notification.requestPermission().then(permission => {
+                            if (permission === 'granted') {
+                                new Notification(title, { body: message });
+                            }
+                        });
+                    }
+                }
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new DeathTimer();
+        });
+    </script>
+</body>
+</html>
